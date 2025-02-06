@@ -1,0 +1,57 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Liste des tâches{% endblock %}
+
+{% block body %}
+<div class="container mt-4">
+    <h1 class="text-center mb-4">📝 Ma To-Do List</h1>
+
+    <!-- Boutons de filtre -->
+    <div class="d-flex justify-content-center mb-4">
+        <a href="{{ path('task_index', {filter: 'pending'}) }}" class="btn btn-warning me-2">
+            📌 Tâches à faire
+        </a>
+        <a href="{{ path('task_index') }}" class="btn btn-primary">
+            📋 Toutes les tâches
+        </a>
+    </div>
+
+    <!-- Bouton pour ajouter une nouvelle tâche -->
+    <div class="text-center mb-4">
+        <a href="{{ path('task_new') }}" class="btn btn-success">➕ Ajouter une tâche</a>
+    </div>
+
+    <div class="row">
+        {% for task in tasks %}
+            <div class="col-md-6">
+                <div class="card shadow-sm mb-3">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            {{ task.title }}
+                            {% if task.isDone %}
+                                <span class="badge bg-success ms-2">✅ Terminée</span>
+                            {% else %}
+                                <span class="badge bg-warning ms-2">⏳ À faire</span>
+                            {% endif %}
+                        </h5>
+                        <p class="card-text text-muted">
+                            {{ task.description ?: 'Aucune description' }}
+                        </p>
+                        <div class="d-flex justify-content-between">
+                            <a href="{{ path('task_edit', { id: task.id }) }}" class="btn btn-info btn-sm">✏ Modifier</a>
+                            <form method="post" action="{{ path('task_delete', { id: task.id }) }}" onsubmit="return confirm('Supprimer cette tâche ?');">
+                                <input type="hidden" name="_token" value="{{ csrf_token('delete' ~ task.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">🗑 Supprimer</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+            <div class="col-12 text-center">
+                <p class="text-muted">Aucune tâche trouvée.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}
